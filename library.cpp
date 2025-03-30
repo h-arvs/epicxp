@@ -9,21 +9,30 @@ uintptr_t FindSig(std::string_view pattern) {
     assert(sig.has_value());
     auto result = hat::find_pattern(sig.value(), ".text");
     assert(result.has_result());
-    return result.has_result() ? reinterpret_cast<uintptr_t>(result.get()) : nullptr;
+    return result.has_result() ? reinterpret_cast<uintptr_t>(result.get()) : 0;
+}
+
+template <typename T>
+T resolveOffset(std::string_view pattern, uintptr_t offset) {
+    auto match = FindSig(pattern);
+    match += offset;
+    return *reinterpret_cast<T*>(match);
 }
 
 struct Player {
     void addLevels(int levels) {
+        static auto offset = resolveOffset<DWORD>("48 8B 80 ? ? ? ? FF 15 ? ? ? ? 49 8B 04 24 8B 97", 3);
         using func_t = void(__fastcall*)(void*, int);
-        auto a = *reinterpret_cast<uintptr_t*>(this) + 0x6D8;
+        auto a = *reinterpret_cast<uintptr_t*>(this) + offset;
         return (*reinterpret_cast<func_t *>(a))(this, levels);
     }
 };
 
 struct ClientInstance {
     Player* getClientPlayer() {
+        static auto offset = resolveOffset<DWORD>("48 8B 80 ? ? ? ? FF 15 ? ? ? ? 48 8B F8 48 85 C0 0F 84 ? ? ? ? 48 8B C8 E8 ? ? ? ? 48 8B F0 48 85 C0 0F 84", 3);
         using func_t = Player*(__fastcall*)(void*);
-        auto a = *(uintptr_t*)this + 0xF0;
+        auto a = *reinterpret_cast<uintptr_t *>(this) + offset;
         return (*reinterpret_cast<func_t*>(a))(this);
     }
 };
