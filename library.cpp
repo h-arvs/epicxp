@@ -40,13 +40,17 @@ struct ClientInstance {
 bool uninject = false;
 void (__fastcall* CIUpdateO)(void* ci);
 void CIUpdate(ClientInstance* ci){
-
-    auto goop = ci->getClientPlayer();
-    if (goop) {
-        goop->addLevels(1000);
+    static bool once = false;
+    if (!once) {
+        auto goop = ci->getClientPlayer();
+        if (goop) {
+            goop->addLevels(1000);
+        }
+        uninject = true;
+        once = true;
     }
-    uninject = true;
 
+    return CIUpdateO(ci);
 }
 
 void init(LPVOID hInstance) {
