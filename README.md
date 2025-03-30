@@ -1,7 +1,7 @@
 # EpicXP
-EpicXP is an injected dll Minecraft: Bedrock that will give the player 1000 levels upon injection.
+EpicXP is an injected dll for Minecraft: Bedrock that will give the player 1000 levels upon injection.
 
-This tool is designed as a utility mod to enchance the Minecraft: Bedrock experience.
+This tool is designed as a utility mod designed to enchance the Minecraft: Bedrock experience.
 ## Usage
 
 - Load into a world
